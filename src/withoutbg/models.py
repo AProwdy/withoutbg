@@ -229,9 +229,9 @@ class SnapModel:
         prepared_image = self._prepare_image(normalized_image)
 
         # Add batch dimension
-        prepared_image = np.expand_dims(prepared_image, axis=0)
+        prepared_image_batched: np.ndarray = np.expand_dims(prepared_image, axis=0)
 
-        return prepared_image.astype(np.float32)
+        return prepared_image_batched.astype(np.float32)
 
     def _estimate_depth(
         self,
