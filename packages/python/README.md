@@ -46,6 +46,25 @@ withoutbg photo.jpg --api-key sk_your_key
 - 🎯 Python API and CLI
 - 🔧 Flexible output formats (PNG, JPEG, WebP)
 
+## Configuration
+
+### Model Path Environment Variables
+
+By default, models are downloaded from HuggingFace Hub. You can override this by setting environment variables to use local model files:
+
+```bash
+export WITHOUTBG_DEPTH_MODEL_PATH=/path/to/depth_anything_v2_vits_slim.onnx
+export WITHOUTBG_ISNET_MODEL_PATH=/path/to/isnet.onnx
+export WITHOUTBG_MATTING_MODEL_PATH=/path/to/focus_matting_1.0.0.onnx
+export WITHOUTBG_REFINER_MODEL_PATH=/path/to/focus_refiner_1.0.0.onnx
+```
+
+This is useful for:
+- Offline environments
+- CI/CD pipelines
+- Custom model versions
+- Faster startup times (no download needed)
+
 ## Documentation
 
 For complete documentation, see the [main project README](../../README.md).

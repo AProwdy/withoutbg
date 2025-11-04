@@ -1,6 +1,7 @@
 """Local model implementations."""
 
 import io
+import os
 from pathlib import Path
 from typing import Any, Optional, Union
 
@@ -120,21 +121,73 @@ class OpenSourceModel:
         self._load_models()
 
     def _get_default_depth_model_path(self) -> Path:
-        """Get path to Depth Anything V2 model from Hugging Face."""
+        """Get path to Depth Anything V2 model from environment variable or Hugging Face.
+        
+        Checks WITHOUTBG_DEPTH_MODEL_PATH environment variable first.
+        If not set, downloads from Hugging Face.
+        """
+        env_path = os.getenv("WITHOUTBG_DEPTH_MODEL_PATH")
+        if env_path:
+            path = Path(env_path)
+            if path.exists():
+                return path
+            else:
+                raise ModelNotFoundError(
+                    f"Depth model not found at path specified in WITHOUTBG_DEPTH_MODEL_PATH: {env_path}"
+                )
         return self._download_from_hf(
             "depth_anything_v2_vits_slim.onnx", "Depth Anything V2 model"
         )
 
     def _get_default_isnet_model_path(self) -> Path:
-        """Get path to ISNet segmentation model from Hugging Face."""
+        """Get path to ISNet segmentation model from environment variable or Hugging Face.
+        
+        Checks WITHOUTBG_ISNET_MODEL_PATH environment variable first.
+        If not set, downloads from Hugging Face.
+        """
+        env_path = os.getenv("WITHOUTBG_ISNET_MODEL_PATH")
+        if env_path:
+            path = Path(env_path)
+            if path.exists():
+                return path
+            else:
+                raise ModelNotFoundError(
+                    f"ISNet model not found at path specified in WITHOUTBG_ISNET_MODEL_PATH: {env_path}"
+                )
         return self._download_from_hf("isnet.onnx", "ISNet segmentation model")
 
     def _get_default_matting_model_path(self) -> Path:
-        """Get path to Matting model from Hugging Face."""
+        """Get path to Matting model from environment variable or Hugging Face.
+        
+        Checks WITHOUTBG_MATTING_MODEL_PATH environment variable first.
+        If not set, downloads from Hugging Face.
+        """
+        env_path = os.getenv("WITHOUTBG_MATTING_MODEL_PATH")
+        if env_path:
+            path = Path(env_path)
+            if path.exists():
+                return path
+            else:
+                raise ModelNotFoundError(
+                    f"Matting model not found at path specified in WITHOUTBG_MATTING_MODEL_PATH: {env_path}"
+                )
         return self._download_from_hf("focus_matting_1.0.0.onnx", "Focus matting model")
 
     def _get_default_refiner_model_path(self) -> Path:
-        """Get path to Refiner model from Hugging Face."""
+        """Get path to Refiner model from environment variable or Hugging Face.
+        
+        Checks WITHOUTBG_REFINER_MODEL_PATH environment variable first.
+        If not set, downloads from Hugging Face.
+        """
+        env_path = os.getenv("WITHOUTBG_REFINER_MODEL_PATH")
+        if env_path:
+            path = Path(env_path)
+            if path.exists():
+                return path
+            else:
+                raise ModelNotFoundError(
+                    f"Refiner model not found at path specified in WITHOUTBG_REFINER_MODEL_PATH: {env_path}"
+                )
         return self._download_from_hf("focus_refiner_1.0.0.onnx", "Focus refiner model")
 
     def _download_from_hf(self, filename: str, model_name: str) -> Path:

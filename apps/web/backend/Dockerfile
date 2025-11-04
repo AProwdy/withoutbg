@@ -47,6 +47,12 @@ COPY models/checkpoints/ ./checkpoints/
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 
+# Set model paths to use local files instead of downloading from HuggingFace
+ENV WITHOUTBG_DEPTH_MODEL_PATH=/app/checkpoints/depth_anything_v2_vits_slim.onnx
+ENV WITHOUTBG_ISNET_MODEL_PATH=/app/checkpoints/isnet.onnx
+ENV WITHOUTBG_MATTING_MODEL_PATH=/app/checkpoints/focus_matting_1.0.0.onnx
+ENV WITHOUTBG_REFINER_MODEL_PATH=/app/checkpoints/focus_refiner_1.0.0.onnx
+
 # Expose port
 EXPOSE 8000
 

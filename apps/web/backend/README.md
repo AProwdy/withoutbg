@@ -39,7 +39,18 @@ Create a `.env` file:
 PORT=8000
 PYTHONUNBUFFERED=1
 WITHOUTBG_API_KEY=sk_your_api_key_here  # Optional
+
+# Model paths (optional - if not set, models will be downloaded from HuggingFace)
+WITHOUTBG_DEPTH_MODEL_PATH=/path/to/depth_anything_v2_vits_slim.onnx
+WITHOUTBG_ISNET_MODEL_PATH=/path/to/isnet.onnx
+WITHOUTBG_MATTING_MODEL_PATH=/path/to/focus_matting_1.0.0.onnx
+WITHOUTBG_REFINER_MODEL_PATH=/path/to/focus_refiner_1.0.0.onnx
 ```
+
+**Model Path Configuration:**
+- If environment variables are set, the application will use local model files instead of downloading from HuggingFace
+- This is useful for offline deployments or when you want to use specific model versions
+- In Docker, these are automatically set to use the models copied into the container at `/app/checkpoints/`
 
 ## Project Structure
 

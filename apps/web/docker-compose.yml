@@ -14,9 +14,14 @@ services:
       - PYTHONUNBUFFERED=1
       - PORT=8000
       - RELOAD=true
+      # Use local model files instead of downloading from HuggingFace
+      - WITHOUTBG_DEPTH_MODEL_PATH=/app/checkpoints/depth_anything_v2_vits_slim.onnx
+      - WITHOUTBG_ISNET_MODEL_PATH=/app/checkpoints/isnet.onnx
+      - WITHOUTBG_MATTING_MODEL_PATH=/app/checkpoints/focus_matting_1.0.0.onnx
+      - WITHOUTBG_REFINER_MODEL_PATH=/app/checkpoints/focus_refiner_1.0.0.onnx
     volumes:
-      # Mount source code for hot-reload
-      - ../../packages/python/src:/usr/local/lib/python3.13/site-packages/withoutbg:ro
+      # Mount source code for hot-reload (correct path for Python 3.12 venv)
+      - ../../packages/python/src/withoutbg:/app/apps/web/backend/.venv/lib/python3.12/site-packages/withoutbg:ro
       - ./backend:/app/backend:ro
       - ../../models/checkpoints:/app/checkpoints:ro
     working_dir: /app
