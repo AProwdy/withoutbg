@@ -47,6 +47,20 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }) => {
                 />
             )}
 
+            {/* Collapse button for desktop - positioned on the border, outside sidebar */}
+            {isOpen && (
+                <button
+                    onClick={onToggle}
+                    className="hidden md:flex fixed top-20 left-64 -translate-x-1/2 p-2.5 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-all shadow-lg items-center justify-center z-[60]"
+                    aria-label="Collapse sidebar"
+                    title="Collapse sidebar"
+                >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
+                </button>
+            )}
+
             {/* Sidebar */}
             <div
                 id="sidebar"
@@ -61,18 +75,6 @@ export const Sidebar = ({ activeTab, onTabChange, isOpen, onToggle }) => {
                 >
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                {/* Collapse button for desktop */}
-                <button
-                    onClick={onToggle}
-                    className="hidden md:block absolute top-4 right-4 p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors"
-                    aria-label="Collapse sidebar"
-                    title="Collapse sidebar"
-                >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
                     </svg>
                 </button>
 
