@@ -2,6 +2,8 @@
 
 React-based web interface for the withoutbg background removal application.
 
+**[📚 View Complete Documentation →](https://withoutbg.com/documentation/integrations/dockerized-web-app?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)**
+
 ## Features
 
 - 🎨 Modern, responsive UI with Tailwind CSS
@@ -10,6 +12,11 @@ React-based web interface for the withoutbg background removal application.
 - 👀 Before/after image comparison
 - ⚡ Real-time processing feedback
 - 📥 Easy download of results
+
+**Model Results:**
+- **[See Focus Open Source Results →](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)**
+- **[See Pro API Results →](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)**
+- **[Compare Focus vs Pro →](https://withoutbg.com/resources/compare/focus-vs-pro?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)**
 
 ## Development
 
@@ -104,6 +111,13 @@ docker run -p 80:80 withoutbg-frontend
 2. Test locally with `npm run dev`
 3. Build with `npm run build` to ensure no errors
 4. Submit a pull request
+
+## Additional Resources
+
+- **[Dockerized Web App Documentation](https://withoutbg.com/documentation/integrations/dockerized-web-app?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)** - Complete deployment guide
+- **[Python SDK Documentation](https://withoutbg.com/documentation/integrations/python-sdk?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)** - Backend API reference
+- **[Focus Model Results](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)** - Example outputs
+- **[Pro API Results](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=frontend-readme)** - Example outputs
 
 ## License
 

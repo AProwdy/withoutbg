@@ -236,13 +236,8 @@ class OpenSourceModel:
     def _load_models(self) -> None:
         """Load all four ONNX models."""
         try:
-            # Configure ONNX Runtime for optimal performance
+            # Configure ONNX Runtime for CPU execution
             providers = ["CPUExecutionProvider"]
-            if ort.get_available_providers():
-                # Prefer GPU if available
-                available = ort.get_available_providers()
-                if "CUDAExecutionProvider" in available:
-                    providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
 
             # Load Depth Anything V2 model
             self.depth_session = ort.InferenceSession(

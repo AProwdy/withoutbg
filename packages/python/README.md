@@ -5,6 +5,8 @@ AI-powered background removal with local and cloud options.
 [![PyPI](https://img.shields.io/pypi/v/withoutbg.svg)](https://pypi.org/project/withoutbg/)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+**[📚 View Complete Documentation →](https://withoutbg.com/documentation/integrations/python-sdk?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)**
+
 ## Installation
 
 ```bash
@@ -19,6 +21,11 @@ pip install withoutbg
 
 ## Quick Start
 
+**Choose Your Model:**
+- **[See Focus Open Source Results →](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)**
+- **[See Pro API Results →](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)**
+- **[Compare Focus vs Pro →](https://withoutbg.com/resources/compare/focus-vs-pro?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)**
+
 ```python
 from withoutbg import WithoutBG
 
@@ -27,7 +34,7 @@ model = WithoutBG.opensource()
 result = model.remove_background("input.jpg")
 result.save("output.png")
 
-# Cloud processing with Studio API for best quality
+# withoutBG Pro for best quality
 model = WithoutBG.api(api_key="sk_your_key")
 result = model.remove_background("input.jpg")
 result.save("output.png")
@@ -72,7 +79,7 @@ for i, result in enumerate(results):
     result.save(f"output_{i}.png")
 ```
 
-### Using Studio API
+### Using withoutBG Pro
 
 ```python
 from withoutbg import WithoutBG
@@ -83,7 +90,7 @@ model = WithoutBG.api(api_key="sk_your_key")
 # Process images
 result = model.remove_background("input.jpg")
 
-# Batch processing with API
+# Batch processing with withoutBG Pro
 results = model.remove_background_batch(
     ["img1.jpg", "img2.jpg", "img3.jpg"],
     output_dir="api_results/"
@@ -93,20 +100,23 @@ results = model.remove_background_batch(
 ### Advanced: Direct Model Access
 
 ```python
-from withoutbg import OpenSourceModel, StudioAPI
+from withoutbg import OpenSourceModel, ProAPI
 
 # For advanced users who need direct control
 opensource_model = OpenSourceModel()
 result = opensource_model.remove_background("input.jpg")
 
 # Or with custom model paths
+# Models can be downloaded from: https://huggingface.co/withoutbg/focus
 model = OpenSourceModel(
     depth_model_path="/path/to/depth.onnx",
-    isnet_model_path="/path/to/isnet.onnx"
+    isnet_model_path="/path/to/isnet.onnx",
+    matting_model_path="/path/to/matting.onnx",
+    refiner_model_path="/path/to/refiner.onnx"
 )
 
-# Direct API access
-api = StudioAPI(api_key="sk_your_key")
+# Direct withoutBG Pro API access
+api = ProAPI(api_key="sk_your_key")
 result = api.remove_background("input.jpg")
 usage = api.get_usage()
 ```
@@ -120,7 +130,7 @@ withoutbg photo.jpg
 # Batch processing
 withoutbg photos/ --batch --output-dir results/
 
-# Use cloud API
+# Use withoutBG Pro
 withoutbg photo.jpg --api-key sk_your_key
 
 # Specify output format
@@ -129,12 +139,23 @@ withoutbg photo.jpg --format jpg --quality 90
 
 ## Features
 
-- ✨ Local processing with Focus v1.0.0 model (free)
-- 🚀 Cloud API for best quality results
+- ✨ Local processing with Focus v1.0.0 model (free, ~320MB download)
+- 🚀 withoutBG Pro for best quality results
 - 📦 Batch processing support
 - 🎯 Python API and CLI
 - 🔧 Flexible output formats (PNG, JPEG, WebP)
 - ⚡ Efficient model loading - load once, process many images
+
+## Performance
+
+**Local Model:**
+- First run: ~5-10 seconds (~320MB download from HuggingFace)
+- CPU: ~2-5 seconds per image
+- Memory: ~2GB RAM
+
+**withoutBG Pro:**
+- ~1-3 seconds per image (network dependent)
+- No local resources needed
 
 ## Configuration
 
@@ -149,6 +170,12 @@ export WITHOUTBG_MATTING_MODEL_PATH=/path/to/focus_matting_1.0.0.onnx
 export WITHOUTBG_REFINER_MODEL_PATH=/path/to/focus_refiner_1.0.0.onnx
 ```
 
+**Model Files (total ~320MB):**
+- ISNet segmentation: 177 MB
+- Depth Anything V2: 99 MB
+- Focus Matting: 27 MB
+- Focus Refiner: 15 MB
+
 This is useful for:
 - Offline environments
 - CI/CD pipelines
@@ -157,7 +184,11 @@ This is useful for:
 
 ## Documentation
 
-For complete documentation, see the [main project README](../../README.md).
+- **[Python SDK Documentation](https://withoutbg.com/documentation/integrations/python-sdk?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)** - Complete online documentation
+- **[Focus Model Results](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)** - See example outputs
+- **[Pro API Results](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)** - See example outputs
+- **[Compare Models](https://withoutbg.com/resources/compare/focus-vs-pro?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=python-package-readme)** - Focus vs Pro comparison
+- **[Main Project README](../../README.md)** - Local documentation
 
 ## Development
 

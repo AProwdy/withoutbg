@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial project structure
 - Core background removal functionality
 - CLI interface
-- API client for Studio service
+- API client for withoutBG Pro service
 - Documentation and examples
 - Test suite
 - GitHub Actions workflows

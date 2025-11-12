@@ -1,0 +1,32 @@
+# Exclude node_modules to prevent conflicts with Docker build
+apps/web/frontend/node_modules
+apps/web/frontend/dist
+apps/web/frontend/.vite
+
+# Exclude Python virtual environments
+apps/web/backend/.venv
+apps/web/backend/__pycache__
+apps/web/backend/**/__pycache__
+packages/python/.venv
+packages/python/**/__pycache__
+
+# Exclude Python cache files
+**/*.pyc
+**/*.pyo
+**/*.pyd
+.Python
+
+# Exclude development files
+.DS_Store
+**/.env
+**/.env.local
+**/*.log
+
+# Exclude git
+.git
+.gitignore
+
+# Exclude test files (optional)
+**/tests
+**/__tests__
+

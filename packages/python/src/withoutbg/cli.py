@@ -24,16 +24,16 @@ from .exceptions import WithoutBGError
 @click.option(
     "--api-key",
     envvar="WITHOUTBG_API_KEY",
-    help="API key for Studio service (or set WITHOUTBG_API_KEY env var)",
+    help="API key for withoutBG Pro service (or set WITHOUTBG_API_KEY env var)",
 )
 @click.option(
-    "--use-api", is_flag=True, help="Use API instead of local Open Source model"
+    "--use-api", is_flag=True, help="Use withoutBG Pro instead of local Open Source model"
 )
 @click.option(
     "--model",
     default="opensource",
     type=click.Choice(["opensource", "api"]),
-    help="Model to use (opensource=local, api=API)",
+    help="Model to use (opensource=local, api=withoutBG Pro)",
 )
 @click.option(
     "--batch",
@@ -73,7 +73,7 @@ def main(
         # Process single image with local Open Source model
         withoutbg image.jpg
 
-        # Use API for best quality processing
+        # Use withoutBG Pro for best quality processing
         withoutbg image.jpg --use-api --api-key sk_...
 
         # Process all images in directory
@@ -95,7 +95,7 @@ def main(
             sys.exit(1)
 
         if verbose:
-            mode = "API" if using_api else "Local Open Source model"
+            mode = "withoutBG Pro" if using_api else "Local Open Source model"
             click.echo(f"Using {mode} for processing...")
             if not using_api:
                 click.echo("Loading models...")

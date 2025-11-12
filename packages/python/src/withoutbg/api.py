@@ -1,4 +1,4 @@
-"""Studio API client for cloud-based background removal."""
+"""withoutBG Pro API client for cloud-based background removal."""
 
 import base64
 import io
@@ -12,13 +12,13 @@ from .exceptions import APIError
 from .models import _apply_exif_orientation
 
 
-class StudioAPI:
-    """Client for withoutbg Studio API."""
+class ProAPI:
+    """Client for withoutBG Pro API."""
 
     def __init__(
         self, api_key: Optional[str] = None, base_url: str = "https://api.withoutbg.com"
     ):
-        """Initialize Studio API client.
+        """Initialize withoutBG Pro API client.
 
         Args:
             api_key: API key for authentication
@@ -118,7 +118,7 @@ class StudioAPI:
     def remove_background(
         self, input_image: Union[str, Path, Image.Image, bytes], progress_callback: Optional[callable] = None, **kwargs: Any
     ) -> Image.Image:
-        """Remove background using Studio API.
+        """Remove background using withoutBG Pro API.
 
         Args:
             input_image: Input image
@@ -132,7 +132,7 @@ class StudioAPI:
             APIError: If API request fails
         """
         if not self.api_key:
-            raise APIError("API key required for Studio service")
+            raise APIError("API key required for withoutBG Pro service")
 
         try:
             if progress_callback:
@@ -176,7 +176,7 @@ class StudioAPI:
             if response.status_code == 401:
                 raise APIError("Invalid API key")
             elif response.status_code == 429:
-                raise APIError("Rate limit exceeded (7 requests per minute)")
+                raise APIError("Rate limit exceeded (20 requests per minute)")
             elif response.status_code == 402:
                 raise APIError(
                     "Insufficient credits. Get more credits at https://withoutbg.com/login"

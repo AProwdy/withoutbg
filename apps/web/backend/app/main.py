@@ -2,18 +2,20 @@
 
 import io
 import os
+from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import Response, JSONResponse
+from fastapi.responses import Response, JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from PIL import Image
 import uvicorn
 
 # Import withoutbg package (install via: uv sync or pip install -e ../../../packages/python)
 from withoutbg import WithoutBG, __version__
 from withoutbg.exceptions import WithoutBGError
-from withoutbg.api import StudioAPI
+from withoutbg.api import ProAPI
 
 app = FastAPI(
     title="withoutbg API",
@@ -29,6 +31,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Static files directory (frontend build)
+STATIC_DIR = Path(__file__).parent.parent.parent / "static"
 
 # Global model instance (initialized at startup, reused for all requests)
 _model: Optional[WithoutBG] = None
@@ -144,11 +149,46 @@ async def get_usage_endpoint(api_key: str):
         Usage statistics
     """
     try:
-        api = StudioAPI(api_key)
+        api = ProAPI(api_key)
         usage = api.get_usage()
         return JSONResponse(content=usage)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to fetch usage: {str(e)}")
+
+
+# Mount static files (only if directory exists - for production)
+if STATIC_DIR.exists():
+    # Serve static assets (js, css, images, etc.)
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR / "assets"), name="assets")
+    
+    # Root route - serve index.html
+    @app.get("/")
+    async def root():
+        """Serve the React frontend index.html at root."""
+        index_path = STATIC_DIR / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+        raise HTTPException(status_code=404, detail="Frontend not found")
+    
+    # Catch-all route for React SPA - must be last
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        """Serve the React frontend for all non-API routes."""
+        # Don't serve frontend for API routes
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="API endpoint not found")
+        
+        # Try to serve the requested file
+        file_path = STATIC_DIR / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+        
+        # Otherwise, serve index.html (SPA routing)
+        index_path = STATIC_DIR / "index.html"
+        if index_path.exists():
+            return FileResponse(index_path)
+        
+        raise HTTPException(status_code=404, detail="Not found")
 
 
 if __name__ == "__main__":

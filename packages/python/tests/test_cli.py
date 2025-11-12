@@ -207,8 +207,8 @@ class TestCLIIntegration:
         assert output_path.exists()
 
     @patch("src.withoutbg.cli.remove_background")
-    def test_single_image_processing_studio_api(self, mock_remove_bg, test_image_file):
-        """Test processing with API model."""
+    def test_single_image_processing_pro_api(self, mock_remove_bg, test_image_file):
+        """Test processing with withoutBG Pro API model."""
         result_image = Image.new("RGBA", (256, 256), color=(255, 0, 0, 128))
         mock_remove_bg.return_value = result_image
 
@@ -225,8 +225,8 @@ class TestCLIIntegration:
         assert "progress_callback" in call_args[1]
 
     @patch("src.withoutbg.cli.remove_background")
-    def test_use_api_flag_forces_studio_model(self, mock_remove_bg, test_image_file):
-        """Test that --use-api flag forces API model."""
+    def test_use_api_flag_forces_pro_model(self, mock_remove_bg, test_image_file):
+        """Test that --use-api flag forces withoutBG Pro model."""
         result_image = Image.new("RGBA", (256, 256), color=(255, 0, 0, 128))
         mock_remove_bg.return_value = result_image
 

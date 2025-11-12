@@ -1,11 +1,12 @@
 """Core background removal functionality with class-based API."""
 
+import time
 from pathlib import Path
 from typing import Any, Optional, Union
 
 from PIL import Image
 
-from .api import StudioAPI
+from .api import ProAPI
 from .exceptions import WithoutBGError
 from .models import OpenSourceModel
 
@@ -15,7 +16,7 @@ class WithoutBG:
     
     Use factory methods to create instances:
     - WithoutBG.opensource() for local Open Source models
-    - WithoutBG.api(api_key) for Studio API
+    - WithoutBG.api(api_key) for withoutBG Pro API
     """
 
     @staticmethod
@@ -33,10 +34,10 @@ class WithoutBG:
 
     @staticmethod
     def api(api_key: str) -> 'WithoutBGAPI':
-        """Create instance using Studio API.
+        """Create instance using withoutBG Pro API.
         
         Args:
-            api_key: API key for Studio service
+            api_key: API key for withoutBG Pro service
             
         Returns:
             WithoutBGAPI: Instance for cloud-based background removal
@@ -202,23 +203,23 @@ class WithoutBGOpenSource(WithoutBG):
 
 
 class WithoutBGAPI(WithoutBG):
-    """Studio API implementation.
+    """withoutBG Pro API implementation.
     
-    Uses cloud-based Studio API for high-quality background removal.
+    Uses cloud-based withoutBG Pro API for high-quality background removal.
     API client is initialized once and reused for all requests.
     """
 
     def __init__(self, api_key: str, base_url: str = "https://api.withoutbg.com"):
-        """Initialize Studio API client.
+        """Initialize withoutBG Pro API client.
         
         Args:
-            api_key: API key for Studio service
+            api_key: API key for withoutBG Pro service
             base_url: Base URL for API endpoints (optional)
             
         Note:
             API client is initialized once and reused for all requests.
         """
-        self.api = StudioAPI(api_key=api_key, base_url=base_url)
+        self.api = ProAPI(api_key=api_key, base_url=base_url)
 
     def remove_background(
         self,
@@ -226,7 +227,7 @@ class WithoutBGAPI(WithoutBG):
         progress_callback: Optional[callable] = None,
         **kwargs: Any,
     ) -> Image.Image:
-        """Remove background using Studio API.
+        """Remove background using withoutBG Pro API.
         
         Args:
             input_image: Input image as file path, PIL Image, or bytes
@@ -258,7 +259,8 @@ class WithoutBGAPI(WithoutBG):
     ) -> list[Image.Image]:
         """Remove background from multiple images using API.
         
-        The API client is reused for all images.
+        The API client is reused for all images. Automatically adds a 3-second
+        delay between requests to respect the 20 requests/minute rate limit.
         
         Args:
             input_images: List of input images
@@ -299,5 +301,10 @@ class WithoutBGAPI(WithoutBG):
                 result.save(output_path)
                 
             results.append(result)
+            
+            # Add delay between requests to respect rate limit (20 requests/minute = 3s per request)
+            # Skip delay after the last image
+            if i < len(input_images) - 1:
+                time.sleep(3)
 
         return results

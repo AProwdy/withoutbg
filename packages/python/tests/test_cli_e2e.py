@@ -59,8 +59,8 @@ class TestCLIE2E:
 
     @pytest.mark.real_processing
     @pytest.mark.api
-    def test_e2e_single_image_studio_api(self, real_test_image_path, temp_output_dir):
-        """Test end-to-end processing with Studio API (if API key available)."""
+    def test_e2e_single_image_pro_api(self, real_test_image_path, temp_output_dir):
+        """Test end-to-end processing with withoutBG Pro API (if API key available)."""
         api_key = os.getenv("WITHOUTBG_API_KEY")
         if not api_key:
             pytest.skip("API key not available for E2E testing")
@@ -68,7 +68,7 @@ class TestCLIE2E:
         if not real_test_image_path.exists():
             pytest.skip("Real test image not available")
 
-        output_path = temp_output_dir / "output_studio.png"
+        output_path = temp_output_dir / "output_pro.png"
 
         result = self.runner.invoke(
             main,
@@ -77,7 +77,7 @@ class TestCLIE2E:
                 "--output",
                 str(output_path),
                 "--model",
-                "studio",
+                "api",
                 "--api-key",
                 api_key,
                 "--verbose",

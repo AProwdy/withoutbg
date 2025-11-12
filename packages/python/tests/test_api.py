@@ -1,4 +1,4 @@
-"""Integration tests for the StudioAPI class."""
+"""Integration tests for the ProAPI class."""
 
 import base64
 import io
@@ -9,17 +9,17 @@ from unittest.mock import Mock, patch
 import pytest
 from PIL import Image
 
-from src.withoutbg.api import StudioAPI
+from src.withoutbg.api import ProAPI
 from src.withoutbg.exceptions import APIError
 
 
-class TestStudioAPI:
-    """Test cases for StudioAPI integration."""
+class TestProAPI:
+    """Test cases for ProAPI integration."""
 
     @pytest.fixture
     def api_client(self):
-        """Create StudioAPI client with test API key."""
-        return StudioAPI(api_key="test_api_key")
+        """Create ProAPI client with test API key."""
+        return ProAPI(api_key="test_api_key")
 
     @pytest.fixture
     def test_image_path(self):
@@ -269,7 +269,7 @@ class TestStudioAPI:
 
     def test_no_api_key_error(self):
         """Test error when no API key is provided."""
-        api_client = StudioAPI()  # No API key
+        api_client = ProAPI()  # No API key
         test_image = Image.new("RGB", (100, 100))
 
         with pytest.raises(APIError, match="API key required"):
@@ -300,8 +300,8 @@ class TestStudioAPI:
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
-            "models": ["open_source", "studio", "premium"],
-            "default": "studio",
+            "models": ["open_source", "pro", "premium"],
+            "default": "pro",
         }
         mock_response.raise_for_status.return_value = None
         mock_get.return_value = mock_response
@@ -309,12 +309,12 @@ class TestStudioAPI:
         result = api_client.get_models()
 
         assert "models" in result
-        assert result["default"] == "studio"
+        assert result["default"] == "pro"
         mock_get.assert_called_once_with("https://api.withoutbg.com/v1/models")
 
     def test_get_usage_no_api_key(self):
         """Test usage retrieval without API key."""
-        api_client = StudioAPI()  # No API key
+        api_client = ProAPI()  # No API key
 
         with pytest.raises(APIError, match="API key required"):
             api_client.get_usage()
@@ -337,7 +337,7 @@ class TestStudioAPI:
     @patch("src.withoutbg.api.requests.Session.post")
     def test_custom_base_url(self, mock_post, mock_alpha_image):
         """Test API client with custom base URL."""
-        custom_api = StudioAPI(api_key="test_key", base_url="https://custom.api.com/")
+        custom_api = ProAPI(api_key="test_key", base_url="https://custom.api.com/")
 
         # Setup mock response
         mock_response = Mock()

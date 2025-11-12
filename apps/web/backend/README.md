@@ -2,14 +2,21 @@
 
 FastAPI-based REST API for AI-powered background removal.
 
+**[📚 View Complete Documentation →](https://withoutbg.com/documentation/integrations/dockerized-web-app?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)**
+
 ## Features
 
 - 🚀 High-performance async API with FastAPI
 - 🤖 Built-in Focus v1.0.0 AI model
-- 🔌 Optional cloud API integration
+- 🔌 Optional withoutBG Pro integration
 - 📊 Health checks and monitoring
 - 🔄 Single and batch processing
 - 📝 Interactive API documentation (Swagger/OpenAPI)
+
+**Model Results:**
+- **[See Focus Open Source Results →](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)**
+- **[See Pro API Results →](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)**
+- **[Compare Focus vs Pro →](https://withoutbg.com/resources/compare/focus-vs-pro?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)**
 
 ## Development
 
@@ -183,6 +190,13 @@ Error responses include detailed messages:
 2. Test with `uvicorn app.main:app --reload`
 3. Ensure all endpoints work correctly
 4. Submit a pull request
+
+## Additional Resources
+
+- **[Dockerized Web App Documentation](https://withoutbg.com/documentation/integrations/dockerized-web-app?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)** - Complete deployment guide
+- **[Python SDK Documentation](https://withoutbg.com/documentation/integrations/python-sdk?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)** - SDK reference for integration
+- **[Focus Model Results](https://withoutbg.com/resources/background-removal-results/model-focus-open-source?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)** - Example outputs
+- **[Pro API Results](https://withoutbg.com/resources/background-removal-results/model-pro-api?utm_source=github&utm_medium=withoutbg-readme&utm_campaign=backend-readme)** - Example outputs
 
 ## License
 

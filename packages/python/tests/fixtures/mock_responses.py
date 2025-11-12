@@ -22,7 +22,7 @@ def get_mock_api_responses():
             "json": {
                 "image": result_image_b64,
                 "processing_time": 1.23,
-                "model_version": "studio-v2.1",
+                "model_version": "pro-v2.1",
             },
         },
         "success_alpha_only": {
@@ -30,7 +30,7 @@ def get_mock_api_responses():
             "json": {
                 "alpha_base64": base64.b64encode(b"alpha_channel_data").decode("utf-8"),
                 "processing_time": 0.89,
-                "model_version": "studio-v2.1",
+                "model_version": "pro-v2.1",
             },
         },
         "unauthorized": {
@@ -84,11 +84,11 @@ def get_mock_api_responses():
         "models_info": {
             "status_code": 200,
             "json": {
-                "models": ["open_source", "studio", "premium"],
-                "default": "studio",
+                "models": ["open_source", "pro", "premium"],
+                "default": "pro",
                 "features": {
                     "open_source": ["basic_removal"],
-                    "studio": ["advanced_removal", "edge_refinement"],
+                    "pro": ["advanced_removal", "edge_refinement"],
                     "premium": ["ultra_quality", "batch_processing"],
                 },
             },

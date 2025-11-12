@@ -1,28 +1,40 @@
-# Makefile for withoutbg project
+# Makefile for withoutbg Python package
 
 .PHONY: help install dev-install test test-unit test-integration test-performance test-coverage lint format type-check clean build docs version-show version-patch version-minor version-major
 
 # Default target
 help:
-	@echo "Available targets:"
+	@echo "Available targets for Python package:"
 	@echo "  install          Install the package"
 	@echo "  dev-install      Install package in development mode with dev dependencies"
 	@echo "  test             Run all tests"
 	@echo "  test-unit        Run unit tests only"
 	@echo "  test-integration Run integration tests only"
 	@echo "  test-performance Run performance tests only"
+	@echo "  test-api         Run API tests"
+	@echo "  test-fast        Run fast tests (skip integration & performance)"
 	@echo "  test-coverage    Run tests with coverage report"
+	@echo "  test-verbose     Run tests with verbose output"
+	@echo "  test-quiet       Run tests with minimal output"
+	@echo "  test-parallel    Run tests in parallel"
 	@echo "  lint             Run linting (ruff)"
 	@echo "  format           Format code (black)"
+	@echo "  format-check     Check code formatting"
 	@echo "  type-check       Run type checking (mypy)"
 	@echo "  quality          Run all quality checks (lint + format + type)"
+	@echo "  fix              Auto-fix linting issues and format code"
 	@echo "  clean            Clean build artifacts"
 	@echo "  build            Build package"
-	@echo "  docs             Generate documentation"
+	@echo "  benchmark        Run performance benchmarks"
+	@echo "  debug-env        Show environment information"
+	@echo "  security         Run security checks"
+	@echo "  deps-check       Check for outdated dependencies"
 	@echo "  version-show     Show current version"
 	@echo "  version-patch    Increment patch version (0.1.0 -> 0.1.1)"
 	@echo "  version-minor    Increment minor version (0.1.0 -> 0.2.0)"
 	@echo "  version-major    Increment major version (0.1.0 -> 1.0.0)"
+	@echo "  dev              Quick development setup and checks"
+	@echo "  ci               Simulate CI pipeline"
 
 # Installation targets
 install:
@@ -33,7 +45,6 @@ dev-install:
 
 # Testing targets
 test:
-	#uv run pytest --run-real-processing --run-performance
 	uv run pytest --run-real-processing
 
 test-unit:
@@ -54,6 +65,15 @@ test-coverage:
 test-fast:
 	uv run pytest -m "not (performance or integration)" -x
 
+test-verbose:
+	uv run pytest -v
+
+test-quiet:
+	uv run pytest -q
+
+test-parallel:
+	uv run pytest -n auto
+
 # Code quality targets
 lint:
 	uv run ruff check src/ tests/
@@ -68,7 +88,7 @@ type-check:
 	uv run mypy src/
 
 quality: lint format-check type-check
-	@echo "All quality checks passed!"
+	@echo "✓ All quality checks passed!"
 
 # Fix common issues
 fix:
@@ -93,11 +113,11 @@ build: clean
 
 # Development workflow
 dev: dev-install quality test-fast
-	@echo "Development setup complete!"
+	@echo "✓ Development setup complete!"
 
 # CI/CD simulation
 ci: dev-install quality test-coverage
-	@echo "CI checks completed!"
+	@echo "✓ CI checks completed!"
 
 # Documentation (placeholder)
 docs:
@@ -114,19 +134,10 @@ debug-env:
 	@echo "Package info:"
 	@uv run python -c "import withoutbg; print(f'withoutbg version: {withoutbg.__version__}')" || echo "Package not installed"
 
-# Testing with different configurations
-test-verbose:
-	uv run pytest -v
-
-test-quiet:
-	uv run pytest -q
-
-test-parallel:
-	uv run pytest -n auto
-
 # Security and dependency checks
 security:
 	@echo "Security checks not yet implemented"
+	@echo "Consider adding: pip-audit or safety"
 
 deps-check:
 	uv run pip list --outdated
@@ -147,7 +158,7 @@ version-major:
 	uv run hatch version major
 	@echo "Version bumped to: $$(uv run hatch version)"
 
-# Release helpers (placeholder)
+# Release helpers
 release-patch: version-patch
 	@echo "Patch release created: $$(uv run hatch version)"
 
@@ -156,3 +167,4 @@ release-minor: version-minor
 
 release-major: version-major
 	@echo "Major release created: $$(uv run hatch version)"
+

@@ -49,7 +49,7 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(pytest.mark.unit)
 
         # Auto-mark API tests
-        if "api" in item.name.lower() or "studio" in item.name.lower():
+        if "api" in item.name.lower() or "pro" in item.name.lower():
             item.add_marker(pytest.mark.api)
 
 

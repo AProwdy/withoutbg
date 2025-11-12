@@ -88,7 +88,7 @@ def remove_background(
     Args:
         input_image: Input image as file path, PIL Image, or bytes
         output_path: Optional path to save the result
-        api_key: API key for Studio service
+        api_key: API key for withoutBG Pro service
         
     Returns:
         PIL Image with background removed
@@ -203,7 +203,6 @@ pytest -v
 ### Prerequisites
 - Python 3.9+
 - Git
-- (Optional) CUDA-compatible GPU for faster local processing
 
 ### Full Development Setup
 ```bash
