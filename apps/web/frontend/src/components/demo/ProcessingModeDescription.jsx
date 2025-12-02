@@ -17,7 +17,7 @@ export const ProcessingModeDescription = ({ processingType }) => {
                 <p className="text-sm text-gray-700 dark:text-gray-300">
                     Use professional-grade cloud processing with superior quality.
                     Requires an API key from{' '}
-                    <a href="https://withoutbg.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 underline hover:text-purple-700 dark:hover:text-purple-300 font-medium">
+                    <a href="https://withoutbg.com?utm_source=docker_app&utm_medium=web&utm_campaign=self_hosted&utm_content=api_description" target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 underline hover:text-purple-700 dark:hover:text-purple-300 font-medium">
                         withoutbg.com
                     </a>
                 </p>

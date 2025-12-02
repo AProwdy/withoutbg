@@ -17,7 +17,7 @@ export const Header = () => {
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-4">
                 brought to you by{' '}
                 <a
-                    href="https://withoutbg.com"
+                    href="https://withoutbg.com?utm_source=docker_app&utm_medium=web&utm_campaign=self_hosted&utm_content=header"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-purple-600 dark:text-purple-400 hover:underline font-medium"

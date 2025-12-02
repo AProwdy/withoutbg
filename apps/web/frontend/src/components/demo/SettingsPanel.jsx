@@ -100,7 +100,7 @@ export const SettingsPanel = ({
                         <p className="text-sm text-yellow-900 dark:text-yellow-200 flex items-center gap-2">
                             <Key className="w-4 h-4 flex-shrink-0" />
                             <span>API key is required for API processing. Get yours at{' '}
-                                <a href="https://withoutbg.com" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-700 dark:hover:text-yellow-300 font-medium">
+                                <a href="https://withoutbg.com?utm_source=docker_app&utm_medium=web&utm_campaign=self_hosted&utm_content=settings_panel" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-700 dark:hover:text-yellow-300 font-medium">
                                     withoutbg.com
                                 </a>
                             </span>
