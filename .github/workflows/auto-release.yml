@@ -1,0 +1,234 @@
+name: Auto Release
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/workflows/ci.yml'
+      - '.github/workflows/release.yml'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install semantic-release
+        run: |
+          npm install -g \
+            semantic-release@23 \
+            @semantic-release/git@10 \
+            @semantic-release/changelog@6 \
+            @semantic-release/exec@6 \
+            conventional-changelog-conventionalcommits@7
+      
+      - name: Run semantic-release
+        id: semantic
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx semantic-release
+      
+      - name: Output release info
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          echo "🎉 New release published: v${{ steps.semantic.outputs.new_release_version }}"
+          echo "📋 Release notes:"
+          echo "${{ steps.semantic.outputs.new_release_notes }}"
+
+  docker-release:
+    needs: semantic-release
+    if: needs.semantic-release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      
+      - name: Pull latest changes
+        run: |
+          git pull origin main
+      
+      - name: Verify version
+        run: |
+          VERSION=$(grep -m 1 'version = ' apps/web/backend/pyproject.toml | cut -d'"' -f2)
+          echo "📦 Building Docker image for version: $VERSION"
+          if [ "$VERSION" != "${{ needs.semantic-release.outputs.new_release_version }}" ]; then
+            echo "❌ Version mismatch!"
+            echo "Expected: ${{ needs.semantic-release.outputs.new_release_version }}"
+            echo "Got: $VERSION"
+            exit 1
+          fi
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      
+      - name: Download model files from S3
+        run: |
+          echo "📥 Downloading ONNX model files from S3..."
+          mkdir -p models/checkpoints
+          
+          aws s3 cp s3://withoutbg-focus/depth_anything_v2_vits_slim.onnx models/checkpoints/
+          aws s3 cp s3://withoutbg-focus/focus_matting_1.0.0.onnx models/checkpoints/
+          aws s3 cp s3://withoutbg-focus/focus_refiner_1.0.0.onnx models/checkpoints/
+          aws s3 cp s3://withoutbg-focus/isnet.onnx models/checkpoints/
+          
+          echo "✅ Model files downloaded successfully"
+          ls -lh models/checkpoints/
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+      
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Extract version components
+        id: version
+        run: |
+          VERSION="${{ needs.semantic-release.outputs.new_release_version }}"
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f1-2)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "MAJOR=$MAJOR" >> $GITHUB_OUTPUT
+          echo "MINOR=$MINOR" >> $GITHUB_OUTPUT
+      
+      - name: Build and test Docker image locally
+        run: |
+          echo "🔨 Building Docker image for validation..."
+          docker buildx build \
+            --platform linux/amd64 \
+            -f apps/web/Dockerfile \
+            -t app:test \
+            --load \
+            .
+          
+          echo "✅ Local build successful"
+          
+          echo "🧪 Testing Docker image..."
+          docker run -d --name test-container -p 8080:80 app:test
+          
+          sleep 10
+          
+          echo "🏥 Testing health endpoint..."
+          curl -f http://localhost:8080/api/health || (docker logs test-container && exit 1)
+          
+          echo "✅ Health check passed"
+          
+          docker stop test-container
+          docker rm test-container
+          
+          echo "✅ Docker image validation complete"
+      
+      - name: Build and push multi-platform Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: apps/web/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ vars.DOCKERHUB_USERNAME }}/app:${{ steps.version.outputs.VERSION }}
+            ${{ vars.DOCKERHUB_USERNAME }}/app:${{ steps.version.outputs.MINOR }}
+            ${{ vars.DOCKERHUB_USERNAME }}/app:${{ steps.version.outputs.MAJOR }}
+            ${{ vars.DOCKERHUB_USERNAME }}/app:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      
+      - name: Update GitHub Release with Docker info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.version.outputs.VERSION }}';
+            const release = await github.rest.repos.getReleaseByTag({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              tag: `v${version}`
+            });
+            
+            const dockerInfo = `
+
+            ## 🐳 Docker Image
+
+            The Docker image is now available on Docker Hub:
+
+            \`\`\`bash
+            # Pull and run
+            docker pull withoutbg/app:${version}
+            docker run -p 80:80 withoutbg/app:${version}
+            \`\`\`
+
+            ### Available tags:
+            - \`${version}\` - Exact version
+            - \`${{ steps.version.outputs.MINOR }}\` - Latest patch for this minor
+            - \`${{ steps.version.outputs.MAJOR }}\` - Latest minor for this major
+            - \`latest\` - Always the newest release
+
+            ### Platforms supported:
+            - linux/amd64 (Intel/AMD CPUs)
+            - linux/arm64 (Apple Silicon, AWS Graviton)
+
+            **Docker Hub:** https://hub.docker.com/r/withoutbg/app
+            `;
+            
+            await github.rest.repos.updateRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              release_id: release.data.id,
+              body: release.data.body + dockerInfo
+            });
+      
+      - name: Summary
+        run: |
+          echo "## 🚀 Automated Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Version **${{ steps.version.outputs.VERSION }}** released successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 What was released:" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏷️ Git tag: \`v${{ steps.version.outputs.VERSION }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 📝 GitHub Release: Created with changelog" >> $GITHUB_STEP_SUMMARY
+          echo "- 🐳 Docker images: Built for AMD64 + ARM64" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Pull the Docker image:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull withoutbg/app:${{ steps.version.outputs.VERSION }}" >> $GITHUB_STEP_SUMMARY
+          echo "docker run -p 80:80 withoutbg/app:latest" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Links:" >> $GITHUB_STEP_SUMMARY
+          echo "- [GitHub Release](https://github.com/${{ github.repository }}/releases/tag/v${{ steps.version.outputs.VERSION }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Docker Hub](https://hub.docker.com/r/withoutbg/app)" >> $GITHUB_STEP_SUMMARY
+
