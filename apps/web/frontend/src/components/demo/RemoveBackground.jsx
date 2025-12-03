@@ -14,6 +14,9 @@ import { Hourglass, CheckCircle2, AlertCircle, Download, Star } from 'lucide-rea
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
 
+const parsedMaxUploads = Number(import.meta.env.VITE_MAX_UPLOADS)
+const MAX_UPLOADS = Number.isFinite(parsedMaxUploads) && parsedMaxUploads > 0 ? parsedMaxUploads : 10
+
 const statusCopy = {
     pending: 'Queued',
     processing: 'Processing',
@@ -108,8 +111,8 @@ export const RemoveBackground = () => {
             return
         }
 
-        if (imageFiles.length > 10) {
-            setError('Maximum 10 images allowed')
+        if (imageFiles.length > MAX_UPLOADS) {
+            setError(`Maximum ${MAX_UPLOADS} images allowed`)
             return
         }
 
@@ -135,7 +138,8 @@ export const RemoveBackground = () => {
         accept: {
             'image/*': ['.png', '.jpg', '.jpeg', '.webp']
         },
-        multiple: true
+        multiple: true,
+        maxFiles: MAX_UPLOADS
     })
 
     const updateUpload = useCallback((index, updater) => {
@@ -299,6 +303,7 @@ export const RemoveBackground = () => {
                         getRootProps={getRootProps}
                         getInputProps={getInputProps}
                         isDragActive={isDragActive}
+                        maxUploads={MAX_UPLOADS}
                     />
                 )}
 

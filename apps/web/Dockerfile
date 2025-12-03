@@ -6,6 +6,9 @@
 # ============================================================================
 FROM node:20-alpine AS frontend-builder
 
+ARG VITE_MAX_UPLOADS=10
+ENV VITE_MAX_UPLOADS=${VITE_MAX_UPLOADS}
+
 WORKDIR /app
 
 # Copy package files

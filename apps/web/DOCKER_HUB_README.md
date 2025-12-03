@@ -204,6 +204,7 @@ docker pull withoutbg/app:1.0
 - **Model**: withoutBG Focus v1.0.0 (pre-loaded)
 - **Supported Formats**: PNG, JPEG, WebP
 - **Max Upload Size**: 10MB (configurable)
+- **Max Images per Upload**: 10 (configurable at build time)
 
 ### Custom Port Mapping
 
@@ -214,6 +215,18 @@ docker run -d \
   withoutbg/app:latest
 
 # Then access at http://localhost:8080
+```
+
+### Change maximum images per upload
+
+The UI defaults to 10 files per batch. To raise or lower it, build the image yourself and set `VITE_MAX_UPLOADS` during the frontend build:
+
+```bash
+docker build -f apps/web/Dockerfile \
+  --build-arg VITE_MAX_UPLOADS=25 \
+  -t withoutbg/app:custom .
+
+docker run -p 80:80 withoutbg/app:custom
 ```
 
 ---

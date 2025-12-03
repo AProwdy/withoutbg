@@ -7,8 +7,9 @@ import { Upload } from 'lucide-react'
  * @param {Object} props.getRootProps - react-dropzone root props
  * @param {Object} props.getInputProps - react-dropzone input props
  * @param {boolean} props.isDragActive - Whether drag is active
+ * @param {number} props.maxUploads - Maximum number of files allowed
  */
-export const ImageUploadZone = ({ getRootProps, getInputProps, isDragActive }) => {
+export const ImageUploadZone = ({ getRootProps, getInputProps, isDragActive, maxUploads }) => {
     return (
         <div>
             <div
@@ -30,7 +31,7 @@ export const ImageUploadZone = ({ getRootProps, getInputProps, isDragActive }) =
                             Drag & drop images here
                         </p>
                         <p className="text-gray-600 dark:text-gray-400 mb-4">
-                            or click to select files (max 10)
+                            or click to select files (max {maxUploads})
                         </p>
                         <p className="text-sm text-gray-500 dark:text-gray-500">
                             Supported formats: PNG, JPEG, WebP
